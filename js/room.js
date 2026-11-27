@@ -2,8 +2,8 @@ import * as THREE from 'three';
 import {
   mat, glowMat, box, cyl, sphere, roundedBoxGeo, canvas2d, tex, canvasPlane,
   roundRect, KR_FONT, rand,
-} from './lib.js';
-import { MEETING, MEETING_SEATS } from './data.js';
+} from './lib.js?v=3';
+import { MEETING, MEETING_SEATS } from './data.js?v=3';
 
 // ---------------------------------------------------------------- textures
 function woodFloorTexture() {
@@ -1057,11 +1057,10 @@ function buildAiCorner(scene) {
     g.add(orb);
   });
 
-  // ottomans for the three AI companions
+  // low ring pedestals behind each AI companion (kept clear of their feet)
   [[6.6, 5.0], [9.4, 5.0], [8.0, 7.4]].forEach(([x, z]) => {
-    const o = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.34, 0.34, 20), mat('#dfe6f8'));
-    o.position.set(x, 0.17, z);
-    o.castShadow = true;
+    const o = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.38, 0.05, 20), mat('#dbe3f6'));
+    o.position.set(x, 0.025, z);
     o.receiveShadow = true;
     scene.add(o);
   });

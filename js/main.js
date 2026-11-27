@@ -4,10 +4,10 @@ import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer
 import {
   TEAM, MEETING, MEETING_SEATS, LOUNGE_SPOTS, LOUNGE_QUEUE,
   MEETING_SCRIPT, CHATTER, TODAY,
-} from './data.js';
-import { buildRoom } from './room.js';
-import { buildCharacter } from './characters.js';
-import { lerpAngle, canvas2d, tex } from './lib.js';
+} from './data.js?v=3';
+import { buildRoom } from './room.js?v=3';
+import { buildCharacter } from './characters.js?v=3';
+import { lerpAngle, canvas2d, tex } from './lib.js?v=3';
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -147,7 +147,7 @@ TEAM.forEach((cfg, index) => {
     energy: 0,
     threshold: 25,
     decay: 0,
-    speed: 1.45 + Math.random() * 0.22,
+    speed: 1.68 + Math.random() * 0.26,
     walkPhase: index * 1.3,
     phase: index * 0.7,
     legAngle: cfg.home.pose === 'sit' ? -1.32 : 0,
