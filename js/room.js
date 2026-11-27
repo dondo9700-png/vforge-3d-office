@@ -177,19 +177,41 @@ function neonTexture() {
   const c = canvas2d(512, 160);
   const x = c.getContext('2d');
   x.clearRect(0, 0, 512, 160);
-  x.font = `800 96px ${KR_FONT}`;
+
+  // dark backlit panel so the sign reads clearly on the cream wall
+  const g = x.createLinearGradient(0, 0, 0, 160);
+  g.addColorStop(0, '#232c40');
+  g.addColorStop(1, '#161c2a');
+  x.fillStyle = g;
+  roundRect(x, 4, 22, 504, 116, 26);
+  x.fill();
+  x.strokeStyle = 'rgba(157,196,255,0.35)';
+  x.lineWidth = 3;
+  roundRect(x, 8, 26, 496, 108, 23);
+  x.stroke();
+
+  x.font = `800 78px ${KR_FONT}`;
   x.textAlign = 'center';
   x.textBaseline = 'middle';
-  x.shadowColor = 'rgba(126,178,255,0.85)';
-  x.shadowBlur = 26;
-  x.fillStyle = '#9dc4ff';
-  x.fillText('VFORGE', 256, 78);
-  x.shadowBlur = 10;
-  x.fillStyle = '#eaf3ff';
-  x.fillText('VFORGE', 256, 78);
+  x.shadowColor = 'rgba(126,178,255,0.9)';
+  x.shadowBlur = 18;
+  x.fillStyle = '#cfe2ff';
+  x.fillText('VFORGE', 240, 76);
   x.shadowBlur = 0;
   x.fillStyle = '#ffffff';
-  x.fillText('VFORGE', 256, 78);
+  x.fillText('VFORGE', 240, 76);
+
+  x.shadowBlur = 0;
+  x.fillStyle = 'rgba(157,196,255,0.85)';
+  x.font = `700 20px ${KR_FONT}`;
+  x.textAlign = 'left';
+  x.fillText('AI', 400, 78);
+
+  // power LED
+  x.fillStyle = '#7ef0c0';
+  x.beginPath();
+  x.arc(60, 80, 6, 0, Math.PI * 2);
+  x.fill();
   return c;
 }
 
