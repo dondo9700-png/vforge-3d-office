@@ -19,7 +19,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.06;
+renderer.toneMappingExposure = 1.0;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 
 const scene = new THREE.Scene();
@@ -63,10 +63,10 @@ controls.screenSpacePanning = false;
 controls.update();
 
 // ------------------------------------------------------------ lights
-const hemi = new THREE.HemisphereLight(0xfff6e8, 0xb99b7d, 1.25);
+const hemi = new THREE.HemisphereLight(0xfff6e8, 0xb99b7d, 1.0);
 scene.add(hemi);
 
-const key = new THREE.DirectionalLight(0xfff1dc, 2.7);
+const key = new THREE.DirectionalLight(0xffedd4, 2.35);
 key.position.set(12, 18, 10);
 key.castShadow = true;
 key.shadow.mapSize.set(2048, 2048);
@@ -80,11 +80,11 @@ key.shadow.bias = -0.0005;
 key.shadow.normalBias = 0.035;
 scene.add(key);
 
-const fill = new THREE.DirectionalLight(0xd6e6ff, 0.55);
+const fill = new THREE.DirectionalLight(0xd6e6ff, 0.4);
 fill.position.set(-10, 10, 12);
 scene.add(fill);
 
-const rim = new THREE.DirectionalLight(0xffe2bd, 0.5);
+const rim = new THREE.DirectionalLight(0xffe2bd, 0.4);
 rim.position.set(-4, 7, -14);
 scene.add(rim);
 
@@ -712,9 +712,9 @@ $('#dash-backdrop').addEventListener('click', closeDashboard);
 
 // ------------------------------------------------------------ camera presets
 const PRESETS = {
-  all: { p: [16.5, 17.5, 22], t: [0, 0.6, -0.4] },
-  meeting: { p: [8.2, 8.0, 12.4], t: [2.2, 0.7, 3.4] },
-  lounge: { p: [-9.0, 7.2, 15.6], t: [-4.9, 0.7, 5.1] },
+  all: { p: [18.0, 16.8, 22.2], t: [1.0, 0.55, 0.7] },
+  meeting: { p: [6.6, 6.4, 10.4], t: [2.2, 0.7, 3.4] },
+  lounge: { p: [-8.4, 6.4, 14.2], t: [-4.9, 0.7, 5.1] },
   board: { p: [4.6, 3.9, 1.6], t: [4.6, 2.3, -7.6] },
 };
 
@@ -960,6 +960,9 @@ window.__vfOffice = {
   agents,
   callMeeting,
   endMeeting,
+  camera,
+  controls,
+  renderer,
   get meetingActive() {
     return meetingActive;
   },

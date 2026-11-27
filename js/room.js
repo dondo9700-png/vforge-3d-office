@@ -9,13 +9,13 @@ import { MEETING, MEETING_SEATS } from './data.js';
 function woodFloorTexture() {
   const c = canvas2d(512, 512);
   const x = c.getContext('2d');
-  x.fillStyle = '#c69c70';
+  x.fillStyle = '#b98a5e';
   x.fillRect(0, 0, 512, 512);
   const rnd = rand(17);
   const plankH = 64;
   for (let row = 0; row < 8; row++) {
-    const shade = 0.9 + rnd() * 0.18;
-    x.fillStyle = `rgb(${Math.round(198 * shade)},${Math.round(157 * shade)},${Math.round(112 * shade)})`;
+    const shade = 0.88 + rnd() * 0.2;
+    x.fillStyle = `rgb(${Math.round(186 * shade)},${Math.round(138 * shade)},${Math.round(94 * shade)})`;
     x.fillRect(0, row * plankH, 512, plankH - 2);
     x.strokeStyle = 'rgba(120,84,54,0.30)';
     x.lineWidth = 1.6;
@@ -180,11 +180,14 @@ function neonTexture() {
   x.font = `800 96px ${KR_FONT}`;
   x.textAlign = 'center';
   x.textBaseline = 'middle';
-  x.shadowColor = '#7fb2ff';
-  x.shadowBlur = 34;
-  x.fillStyle = '#cfe0ff';
+  x.shadowColor = '#8fc0ff';
+  x.shadowBlur = 44;
+  x.fillStyle = '#e6efff';
   x.fillText('VFORGE', 256, 78);
-  x.shadowBlur = 14;
+  x.shadowBlur = 18;
+  x.fillStyle = '#ffffff';
+  x.fillText('VFORGE', 256, 78);
+  x.shadowBlur = 0;
   x.fillStyle = '#ffffff';
   x.fillText('VFORGE', 256, 78);
   return c;
@@ -258,12 +261,12 @@ function signTexture(lines, accent = '#2e6bff') {
 
 // ---------------------------------------------------------------- pieces
 function buildBase(scene) {
-  const platform = box(22.6, 0.9, 18.8, '#b8895f', 0.22);
+  const platform = box(21.6, 0.9, 17.8, '#a97a4c', 0.22);
   platform.position.y = -0.45;
   platform.receiveShadow = true;
   scene.add(platform);
 
-  const rim = box(22.9, 0.16, 19.1, '#a3764f', 0.1);
+  const rim = box(22.0, 0.16, 18.2, '#8e6438', 0.1);
   rim.position.y = -0.82;
   scene.add(rim);
 
@@ -280,7 +283,7 @@ function buildBase(scene) {
 }
 
 function buildWalls(scene) {
-  const wallColor = '#f3e7d5';
+  const wallColor = '#f5e9d7';
   const back = box(20.5, 4.0, 0.24, wallColor, 0.03);
   back.position.set(0.1, 2.0, -8.12);
   scene.add(back);
@@ -736,7 +739,7 @@ function buildMeeting(scene, pickables) {
   const cz = MEETING.z;
 
   // rug
-  const rug = new THREE.Mesh(new THREE.CircleGeometry(3.05, 48), mat('#b9cbd9', { roughness: 0.95 }));
+  const rug = new THREE.Mesh(new THREE.CircleGeometry(3.05, 48), mat('#a9bfd0', { roughness: 0.95 }));
   rug.rotation.x = -Math.PI / 2;
   rug.position.set(cx, 0.012, cz);
   rug.receiveShadow = true;
@@ -1005,7 +1008,7 @@ function buildAiCorner(scene) {
   g.position.set(8.0, 0, 5.8);
   scene.add(g);
 
-  const rug = new THREE.Mesh(new THREE.CircleGeometry(2.0, 40), mat('#cfd9f2', { roughness: 0.95 }));
+  const rug = new THREE.Mesh(new THREE.CircleGeometry(2.0, 40), mat('#bcc9ee', { roughness: 0.95 }));
   rug.rotation.x = -Math.PI / 2;
   rug.position.y = 0.012;
   rug.receiveShadow = true;
@@ -1120,7 +1123,7 @@ function buildDecor(scene) {
   scene.add(p2frame);
 
   // neon sign on left wall
-  const neon = canvasPlane(neonTexture(), 2.3, 0.72, { toneMapped: false, opacity: 0.98 });
+  const neon = canvasPlane(neonTexture(), 2.3, 0.72, { toneMapped: false, opacity: 0.98, blending: THREE.AdditiveBlending });
   neon.position.set(-9.84, 3.1, -3.4);
   neon.rotation.y = Math.PI / 2;
   scene.add(neon);
@@ -1143,12 +1146,12 @@ function buildDecor(scene) {
   // pendant lamps
   addPendant(scene, MEETING.x - 0.1, MEETING.z + 0.2, '#f2c14e');
   addPendant(scene, 3.4, -3.1, '#f2c14e');
-  addPendant(scene, -5.6, -4.4, '#e9d9bf');
 
   // plants in corners
-  scene.add(makePlant(1.25, 9.2, 0, -7.1, '#6fa96f'));
-  scene.add(makePlant(0.95, -9.2, 0, 7.2, '#7fb069'));
-  scene.add(makePlant(0.8, 9.3, 0, -5.2, '#8fbf7c'));
+  scene.add(makePlant(1.2, 9.2, 0, -7.0, '#6fa96f'));
+  scene.add(makePlant(0.95, -9.15, 0, 7.2, '#7fb069'));
+  scene.add(makePlant(1.05, 5.6, 0, 7.2, '#8fbf7c'));
+  scene.add(makePlant(0.8, 6.75, 0, 0.5, '#6fa96f'));
 
   // wall clock
   const clockCanvas = canvas2d(256, 256);
@@ -1241,6 +1244,129 @@ function addPendant(scene, x, z, shadeColor) {
   light.position.y = 2.94;
   g.add(light);
   scene.add(g);
+}
+
+function buildServerRack(scene) {
+  const g = new THREE.Group();
+  g.position.set(9.0, 0, -5.9);
+  g.rotation.y = -Math.PI / 2;
+  scene.add(g);
+
+  const cabinet = box(1.05, 1.85, 0.6, '#2f3540', 0.06);
+  cabinet.position.y = 0.94;
+  g.add(cabinet);
+  const trim = box(1.1, 0.08, 0.64, '#4a5261', 0.03);
+  trim.position.y = 1.9;
+  g.add(trim);
+
+  for (let i = 0; i < 4; i++) {
+    const blade = box(0.88, 0.26, 0.06, '#3b4453', 0.03);
+    blade.position.set(0, 0.34 + i * 0.34, 0.31);
+    g.add(blade);
+    for (let k = 0; k < 3; k++) {
+      const led = new THREE.Mesh(
+        new THREE.SphereGeometry(0.018, 8, 6),
+        glowMat(k === 0 ? '#7ef0c0' : '#7fb2ff', 2)
+      );
+      led.position.set(-0.3 + k * 0.07, 0.39 + i * 0.34, 0.35);
+      g.add(led);
+    }
+    const vent = box(0.3, 0.05, 0.02, '#242a35', 0.01);
+    vent.position.set(0.22, 0.34 + i * 0.34, 0.35);
+    g.add(vent);
+  }
+
+  g.add(makePlant(0.3, -0.28, 1.95, 0, '#7fb069'));
+  const coil = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.03, 6, 14), mat('#e8746a'));
+  coil.rotation.x = Math.PI / 2;
+  coil.position.set(0.28, 1.96, 0);
+  g.add(coil);
+}
+
+function buildPrinterNook(scene) {
+  const g = new THREE.Group();
+  g.position.set(9.15, 0, 1.5);
+  g.rotation.y = -Math.PI / 2;
+  scene.add(g);
+
+  const cabinet = box(2.0, 0.78, 0.62, '#dfd2bd', 0.05);
+  cabinet.position.y = 0.4;
+  g.add(cabinet);
+  const top = box(2.08, 0.07, 0.7, '#f2e6d4', 0.03);
+  top.position.y = 0.82;
+  g.add(top);
+  [-0.66, 0, 0.66].forEach((ox) => {
+    const door = box(0.6, 0.5, 0.03, '#cdbda4', 0.02);
+    door.position.set(ox, 0.42, 0.32);
+    g.add(door);
+  });
+
+  const printer = box(0.72, 0.38, 0.56, '#e9e6df', 0.05);
+  printer.position.set(-0.4, 1.03, 0);
+  g.add(printer);
+  const printerTop = box(0.68, 0.08, 0.5, '#f7f4ee', 0.03);
+  printerTop.position.set(-0.4, 1.24, -0.02);
+  g.add(printerTop);
+  const tray = box(0.44, 0.05, 0.2, '#cfcbc2', 0.02);
+  tray.position.set(-0.4, 1.29, 0.28);
+  g.add(tray);
+  const paper = box(0.3, 0.02, 0.16, '#ffffff', 0.01);
+  paper.position.set(-0.4, 1.32, 0.3);
+  g.add(paper);
+  const printerLed = new THREE.Mesh(new THREE.SphereGeometry(0.02, 8, 6), glowMat('#7fb2ff', 2));
+  printerLed.position.set(-0.16, 1.1, 0.29);
+  g.add(printerLed);
+
+  const paperBox = box(0.3, 0.36, 0.3, '#c9a175', 0.03);
+  paperBox.position.set(0.55, 1.0, 0);
+  g.add(paperBox);
+  const cup = cyl(0.06, 0.05, 0.1, '#ffffff', 12);
+  cup.position.set(0.15, 0.9, 0.16);
+  g.add(cup);
+  g.add(makePlant(0.28, 0.36, 0.86, -0.16, '#7fb069'));
+}
+
+function buildWaterCooler(scene) {
+  const g = new THREE.Group();
+  g.position.set(-9.15, 0, 0.45);
+  g.rotation.y = Math.PI / 2;
+  scene.add(g);
+  const body = box(0.5, 1.05, 0.42, '#eef1f4', 0.05);
+  body.position.y = 0.53;
+  g.add(body);
+  const bottle = cyl(0.16, 0.2, 0.36, '#bfe4f2', 16, { transparent: true, opacity: 0.82 });
+  bottle.position.y = 1.28;
+  g.add(bottle);
+  const neck = cyl(0.07, 0.09, 0.1, '#bfe4f2', 12);
+  neck.position.y = 1.5;
+  g.add(neck);
+  const tap = box(0.1, 0.06, 0.06, '#7fb2ff', 0.02);
+  tap.position.set(0, 0.86, 0.24);
+  g.add(tap);
+  const drip = box(0.34, 0.03, 0.1, '#d7dde5', 0.01);
+  drip.position.set(0, 0.7, 0.2);
+  g.add(drip);
+}
+
+function buildBoxes(scene) {
+  const g = new THREE.Group();
+  g.position.set(9.25, 0, 3.2);
+  scene.add(g);
+  const b1 = box(0.7, 0.5, 0.6, '#c9a578', 0.03);
+  b1.position.y = 0.25;
+  b1.rotation.y = 0.12;
+  g.add(b1);
+  const b2 = box(0.56, 0.42, 0.52, '#d6b489', 0.03);
+  b2.position.set(0.05, 0.71, 0.04);
+  b2.rotation.y = -0.22;
+  g.add(b2);
+  const b3 = box(0.4, 0.34, 0.38, '#c19567', 0.03);
+  b3.position.set(-0.02, 1.09, -0.02);
+  b3.rotation.y = 0.3;
+  g.add(b3);
+  const tape = box(0.7, 0.03, 0.12, '#e8d8bf', 0.01);
+  tape.position.set(0, 0.51, 0);
+  g.add(tape);
 }
 
 function buildEmptyDeskArea(scene) {
@@ -1434,6 +1560,10 @@ export function buildRoom(scene) {
   buildTeamDesk(scene, 0.4, -1.4, 3);
   buildTeamDesk(scene, 3.2, -1.4, 1);
   buildEmptyDeskArea(scene);
+  buildServerRack(scene);
+  buildPrinterNook(scene);
+  buildWaterCooler(scene);
+  buildBoxes(scene);
   const meeting = buildMeeting(scene, pickables);
   buildLounge(scene);
   buildAiCorner(scene);

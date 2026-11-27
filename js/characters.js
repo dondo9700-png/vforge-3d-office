@@ -481,5 +481,6 @@ export function buildCharacter(cfg) {
   if (cfg.kind === 'mascot') parts = buildMascot(cfg, group);
   else if (cfg.kind === 'ai') parts = buildAi(cfg, group);
   else parts = buildHuman(cfg, group);
+  group.scale.setScalar(1.07);
   return { group, parts, anchorY: parts.anchorY };
 }

@@ -268,6 +268,7 @@ html, body {
   bottom: 10px;
   transform: translateX(-50%) translateY(6px) scale(.92);
   transform-origin: bottom center;
+  width: max-content;
   max-width: 208px;
   padding: 8px 12px;
   border-radius: 14px;
@@ -652,7 +653,7 @@ html, body {
   .dash-row { grid-template-columns: 1.2fr 92px 1fr; gap: 8px; padding: 9px 2px; }
   .dr-role { display: none; }
   .dash-foot { padding: 10px 16px calc(12px + env(safe-area-inset-bottom)); font-size: 10.5px; }
-  .bubble { max-width: 168px; font-size: 11px; padding: 7px 10px; }
+  .bubble { max-width: 176px; font-size: 11px; padding: 7px 10px; }
 }
 
 @media (max-width: 400px) {
