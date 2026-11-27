@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
 <meta name="theme-color" content="#F0E2CE" />
 <title>VFORGE 3D 오피스</title>
-<meta name="description" content="VFORGE의 AI 팀과 함께하는 3D 미니어처 오피스. 회의 소집, 에너지 충전, 실시간 현황판." />
+<meta name="description" content="VFORGE의 3D 미니어처 오피스. 팀장 VFORGE실장과 AI 팀원들이 회의하고 일하는 모습, 실시간 현황판." />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%232E6BFF'/%3E%3Cpath d='M16 18h9l7 20 7-20h9L36 50h-8z' fill='%23fff'/%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
-<link rel="stylesheet" href="./css/style.css?v=3" />
+<link rel="stylesheet" href="./css/style.css?v=4" />
 <script>
   // Boot diagnostics: show module/network failures on screen so the page never fails silently.
   window.__vfBooted = false;
@@ -46,7 +46,7 @@
     <div class="logo">V</div>
     <div class="brand-text">
       <h1>VFORGE 3D 오피스</h1>
-      <p>AI 팀과 함께하는 미니어처 작업실</p>
+      <p>팀장 VFORGE실장 · AI 팀원 9명의 미니어처 오피스</p>
     </div>
   </div>
   <div class="topbar-right">
@@ -62,7 +62,7 @@
 <div class="hint" id="hint">
   <span>🖱️ 드래그로 회전 · 휠/핀치로 확대</span>
   <span class="hint-sep">·</span>
-  <span>📞 전화기나 캐릭터를 눌러보세요</span>
+  <span>📞 전화기로 회의 소집 · 팀장이 브리핑을 주재해요</span>
 </div>
 
 <section class="member-card" id="member-card" hidden>
@@ -71,7 +71,10 @@
     <span class="mc-dot" id="mc-dot"></span>
     <div class="mc-id">
       <strong id="mc-name">이름</strong>
-      <span id="mc-role">역할</span>
+      <div class="mc-meta">
+        <span class="mc-rank" id="mc-rank">팀원</span>
+        <span id="mc-role">역할</span>
+      </div>
     </div>
     <span class="mc-state" id="mc-state">작업 중</span>
   </div>
@@ -89,7 +92,7 @@
     <header class="dash-head">
       <div>
         <h2>📋 VFORGE 현황판</h2>
-        <p id="dash-sub">팀원 10명의 상태와 오늘의 실적</p>
+        <p id="dash-sub">팀장 1명 · 팀원 9명의 상태와 오늘의 실적</p>
       </div>
       <button class="dash-close" id="dash-close" aria-label="닫기">✕</button>
     </header>
@@ -97,7 +100,7 @@
     <div class="dash-list" id="dash-list"></div>
     <footer class="dash-foot">
       <span id="dash-clock">--:--</span>
-      <span>VFORGE · 1인 프리랜서 운영 중</span>
+      <span>VFORGE · 팀장 1 · 팀원 9 운영 중</span>
     </footer>
   </div>
 </section>
@@ -130,6 +133,6 @@
   }
 }
 </script>
-<script type="module" src="./js/main.js?v=3"></script>
+<script type="module" src="./js/main.js?v=4"></script>
 </body>
 </html>

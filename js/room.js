@@ -2,8 +2,8 @@ import * as THREE from 'three';
 import {
   mat, glowMat, box, cyl, sphere, roundedBoxGeo, canvas2d, tex, canvasPlane,
   roundRect, KR_FONT, rand,
-} from './lib.js?v=3';
-import { MEETING, MEETING_SEATS } from './data.js?v=3';
+} from './lib.js?v=4';
+import { MEETING, MEETING_SEATS, TEAM } from './data.js?v=4';
 
 // ---------------------------------------------------------------- textures
 function woodFloorTexture() {
@@ -1057,8 +1057,8 @@ function buildAiCorner(scene) {
     g.add(orb);
   });
 
-  // low ring pedestals behind each AI companion (kept clear of their feet)
-  [[6.6, 5.0], [9.4, 5.0], [8.0, 7.4]].forEach(([x, z]) => {
+  // low ring pedestal for the AI LAB research desk (Gemini)
+  [[8.0, 7.4]].forEach(([x, z]) => {
     const o = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.38, 0.05, 20), mat('#dbe3f6'));
     o.position.set(x, 0.025, z);
     o.receiveShadow = true;
@@ -1079,7 +1079,7 @@ function buildAiCorner(scene) {
   x.fillText('AI LAB', 128, 58);
   x.fillStyle = 'rgba(223,230,255,0.65)';
   x.font = `600 20px ${KR_FONT}`;
-  x.fillText('CLAUDE · GPT · GEMINI', 128, 96);
+  x.fillText('GEMINI · 리서치 데스크', 128, 96);
   const sign = canvasPlane(c, 1.4, 0.7, { toneMapped: false });
   sign.position.set(8.0, 2.0, 7.95);
   sign.rotation.y = Math.PI;
@@ -1390,38 +1390,75 @@ function buildBoxes(scene) {
   g.add(tape);
 }
 
-function buildEmptyDeskArea(scene) {
-  buildTeamDesk(scene, 6.0, -1.4, 2, false);
-  const c = canvas2d(256, 200);
+function buildAiTeamDesks(scene) {
+  // Claude · ChatGPT는 구석 라운지 대기에서 정식 팀원 책상으로 이동했습니다.
+  ['claude', 'chatgpt'].forEach((id, i) => {
+    const cfg = TEAM.find((m) => m.id === id);
+    if (!cfg) return;
+    const x = cfg.home.x;
+    buildTeamDesk(scene, x, -1.4, i === 0 ? 2 : 0, true);
+
+    const plate = canvasPlane(deskNamePlateTexture(cfg.name, `팀원 · ${cfg.duty}`, cfg.color), 0.58, 0.22, { toneMapped: false });
+    plate.position.set(x, 0.9, -1.0);
+    plate.rotation.x = -0.12;
+    scene.add(plate);
+    const stand = box(0.58, 0.19, 0.04, '#e9d9bf', 0.02);
+    stand.position.set(x, 0.86, -1.03);
+    scene.add(stand);
+
+    scene.add(makePlant(0.26, x + 1.0, 0.78, -1.05, '#7fb069'));
+  });
+}
+
+function deskNamePlateTexture(name, duty, accent = '#2e6bff') {
+  const c = canvas2d(256, 96);
   const x = c.getContext('2d');
-  x.fillStyle = 'rgba(255,253,248,0.97)';
-  roundRect(x, 4, 4, 248, 192, 20);
+  x.fillStyle = '#fffdf8';
+  roundRect(x, 2, 2, 252, 92, 16);
   x.fill();
-  x.strokeStyle = '#c8b393';
-  x.lineWidth = 3;
-  x.setLineDash([9, 7]);
-  roundRect(x, 10, 10, 236, 180, 16);
+  x.strokeStyle = accent;
+  x.lineWidth = 4;
+  roundRect(x, 6, 6, 244, 84, 13);
   x.stroke();
-  x.setLineDash([]);
   x.textAlign = 'center';
-  x.fillStyle = '#8b7355';
-  x.font = `800 26px ${KR_FONT}`;
-  x.fillText('새 팀원 자리', 128, 78);
-  x.fillStyle = '#b09a7a';
-  x.font = `600 20px ${KR_FONT}`;
-  x.fillText('함께할 사람을 기다리는 중', 128, 112);
-  x.fillStyle = '#d9c9b2';
-  x.font = `700 18px ${KR_FONT}`;
-  x.fillText('NEXT SEAT ✦', 128, 146);
-  const sign = canvasPlane(c, 0.62, 0.48, { toneMapped: false });
-  sign.position.set(6.0, 1.02, -1.1);
-  sign.rotation.x = -0.12;
-  scene.add(sign);
-  const stand = box(0.62, 0.4, 0.04, '#e9d9bf', 0.02);
-  stand.position.set(6.0, 0.96, -1.13);
-  scene.add(stand);
-  const plant = makePlant(0.3, 6.85, 0.78, -1.2, '#7fb069');
-  scene.add(plant);
+  x.textBaseline = 'middle';
+  x.fillStyle = accent;
+  x.font = `800 34px ${KR_FONT}`;
+  x.fillText(name, 128, 36);
+  x.fillStyle = '#6a7385';
+  x.font = `600 18px ${KR_FONT}`;
+  x.fillText(duty, 128, 70);
+  return c;
+}
+
+// 팀장(VFORGE실장)이 서 있는 자리 옆에 직책 표지판
+function buildLeaderStand(scene) {
+  const c = canvas2d(256, 128);
+  const x = c.getContext('2d');
+  x.fillStyle = 'rgba(255,253,248,0.98)';
+  roundRect(x, 4, 4, 248, 120, 22);
+  x.fill();
+  x.strokeStyle = '#2e6bff';
+  x.lineWidth = 5;
+  roundRect(x, 9, 9, 238, 110, 18);
+  x.stroke();
+  x.textAlign = 'center';
+  x.textBaseline = 'middle';
+  x.fillStyle = '#2e6bff';
+  x.font = `800 46px ${KR_FONT}`;
+  x.fillText('팀장', 128, 48);
+  x.fillStyle = '#5b6478';
+  x.font = `700 24px ${KR_FONT}`;
+  x.fillText('총괄 오퍼레이터', 128, 92);
+  const panel = canvasPlane(c, 0.66, 0.33, { toneMapped: false });
+  panel.position.set(-3.62, 1.18, -1.9);
+  scene.add(panel);
+  const post = cyl(0.018, 0.018, 0.86, '#b7a893', 10);
+  post.position.set(-3.62, 0.43, -1.94);
+  scene.add(post);
+  const base = cyl(0.17, 0.2, 0.05, '#a89078', 18);
+  base.position.set(-3.62, 0.025, -1.94);
+  scene.add(base);
 }
 
 // ---------------------------------------------------------------- board
@@ -1471,7 +1508,7 @@ function drawBoard(canvas, members) {
   x.fillStyle = '#2e6bff';
   x.font = `800 22px ${KR_FONT}`;
   x.textAlign = 'left';
-  x.fillText('팀원 상태 · 10명', 44, 128);
+  x.fillText('팀 구성 · 팀장 1 · 팀원 9', 44, 128);
 
   const stateColor = {
     work: '#2fc48d',
@@ -1482,32 +1519,55 @@ function drawBoard(canvas, members) {
     idle: '#2fc48d',
   };
 
+  // 직책 배지 색 — 팀장은 파란 배지로 한눈에 보이게
+  const rankStyle = {
+    '팀장': { bg: '#2e6bff', fg: '#ffffff' },
+    '대표': { bg: '#2f4c7e', fg: '#ffffff' },
+    '팀원': { bg: 'rgba(120,140,170,0.18)', fg: '#5b6478' },
+  };
+
   const colX = [44, 624];
   members.forEach((m, i) => {
     const col = i < 5 ? 0 : 1;
     const row = i % 5;
     const bx = colX[col];
-    const by = 158 + row * 78;
+    const by = 158 + row * 80;
 
-    x.fillStyle = m.color;
-    x.beginPath();
-    x.arc(bx + 10, by + 10, 8, 0, Math.PI * 2);
+    // 직책 배지
+    const rs = rankStyle[m.rank] || rankStyle['팀원'];
+    const chipW = 56;
+    x.fillStyle = rs.bg;
+    roundRect(x, bx, by - 4, chipW, 30, 9);
     x.fill();
+    x.fillStyle = rs.fg;
+    x.font = `800 18px ${KR_FONT}`;
+    x.textAlign = 'center';
+    x.textBaseline = 'middle';
+    x.fillText(m.rank, bx + chipW / 2, by + 12);
 
+    // 이름
     x.fillStyle = '#1f2531';
-    x.font = `700 26px ${KR_FONT}`;
+    x.font = `700 25px ${KR_FONT}`;
     x.textAlign = 'left';
-    x.fillText(m.name, bx + 28, by + 20);
+    x.textBaseline = 'alphabetic';
+    x.fillText(m.name, bx + chipW + 12, by + 22);
 
+    // 상태
     x.fillStyle = stateColor[m.state] || '#9aa3ae';
     x.font = `700 19px ${KR_FONT}`;
     x.textAlign = 'right';
-    x.fillText(m.stateLabel, bx + 500, by + 19);
+    x.fillText(m.stateLabel, bx + 508, by + 21);
 
-    // energy bar
-    const barX = bx + 28;
-    const barY = by + 32;
-    const barW = 430;
+    // 담당 업무
+    x.fillStyle = '#7a8396';
+    x.font = `600 17px ${KR_FONT}`;
+    x.textAlign = 'left';
+    x.fillText(m.duty || '', bx, by + 56);
+
+    // 에너지 바
+    const barX = bx + 234;
+    const barY = by + 43;
+    const barW = 224;
     x.fillStyle = 'rgba(120,140,170,0.16)';
     roundRect(x, barX, barY, barW, 11, 6);
     x.fill();
@@ -1528,9 +1588,9 @@ function drawBoard(canvas, members) {
     x.fill();
 
     x.fillStyle = '#6a7385';
-    x.font = `700 19px ${KR_FONT}`;
+    x.font = `700 17px ${KR_FONT}`;
     x.textAlign = 'right';
-    x.fillText(`${Math.round(pct)}%`, bx + 500, by + 44);
+    x.fillText(`${Math.round(pct)}%`, bx + 508, by + 56);
   });
 
   // stats strip
@@ -1580,7 +1640,8 @@ export function buildRoom(scene) {
   buildTeamDesk(scene, 6.0, -4.8, 0);
   buildTeamDesk(scene, 0.4, -1.4, 3);
   buildTeamDesk(scene, 3.2, -1.4, 1);
-  buildEmptyDeskArea(scene);
+  buildAiTeamDesks(scene);
+  buildLeaderStand(scene);
   buildServerRack(scene);
   buildPrinterNook(scene);
   buildWaterCooler(scene);

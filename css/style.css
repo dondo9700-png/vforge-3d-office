@@ -310,6 +310,8 @@ html, body {
 .bubble.charge::after { background: rgba(255, 246, 219, .98); border-color: rgba(242, 169, 59, .55); }
 .bubble.warn { background: rgba(255, 240, 240, .98); border-color: rgba(234, 106, 106, .4); color: #7c2a2a; }
 .bubble.warn::after { background: rgba(255, 240, 240, .98); border-color: rgba(234, 106, 106, .4); }
+.bubble.lead { background: linear-gradient(150deg, #2e6bff, #1f4fcc); color: #fff; border-color: rgba(255, 255, 255, .45); box-shadow: 0 14px 30px rgba(31, 79, 204, .45); font-weight: 750; }
+.bubble.lead::after { background: #234fc0; border-color: rgba(255, 255, 255, .45); }
 
 .tag {
   position: absolute;
@@ -385,6 +387,25 @@ html, body {
 .mc-id { display: flex; flex-direction: column; min-width: 0; }
 .mc-id strong { font-size: 15px; font-weight: 800; letter-spacing: -.3px; }
 .mc-id span { font-size: 11px; color: var(--ink-2); font-weight: 600; margin-top: 1px; }
+
+.mc-meta { display: flex; align-items: center; gap: 6px; min-width: 0; margin-top: 2px; }
+.mc-meta #mc-role { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.mc-rank {
+  flex: none;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  letter-spacing: -.1px;
+  padding: 2px 7px;
+  border-radius: 7px;
+  margin-top: 0 !important;
+  background: rgba(31, 37, 49, .07);
+  color: #59637a;
+}
+
+.mc-rank.lead { background: linear-gradient(140deg, #4d84ff, #1f4fcc); color: #fff; box-shadow: 0 3px 8px rgba(46, 107, 255, .34); }
+.mc-rank.boss { background: rgba(47, 76, 126, .12); color: #2f4c7e; }
+.mc-rank.member { background: rgba(31, 37, 49, .07); color: #59637a; }
 
 .mc-state {
   margin-left: auto;
@@ -539,6 +560,19 @@ html, body {
 .dr-name { display: flex; align-items: center; gap: 9px; min-width: 0; }
 .dr-name i { width: 9px; height: 9px; border-radius: 50%; flex: none; }
 .dr-name b { font-size: 13px; font-weight: 800; letter-spacing: -.3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.dr-rank {
+  flex: none;
+  font-size: 9.5px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: rgba(31, 37, 49, .07);
+  color: #59637a;
+}
+
+.dr-rank.lead { background: linear-gradient(140deg, #4d84ff, #1f4fcc); color: #fff; }
+.dr-rank.boss { background: rgba(47, 76, 126, .12); color: #2f4c7e; }
 .dr-role { font-size: 11.5px; color: var(--ink-2); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .dr-state { font-size: 10.5px; font-weight: 800; text-align: center; padding: 4px 7px; border-radius: 7px; background: rgba(47, 196, 141, .13); color: #1c8a63; white-space: nowrap; }
 .dr-state.meeting { background: rgba(242, 169, 59, .18); color: #9a6206; }

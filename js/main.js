@@ -4,10 +4,10 @@ import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer
 import {
   TEAM, MEETING, MEETING_SEATS, LOUNGE_SPOTS, LOUNGE_QUEUE,
   MEETING_SCRIPT, CHATTER, TODAY,
-} from './data.js?v=3';
-import { buildRoom } from './room.js?v=3';
-import { buildCharacter } from './characters.js?v=3';
-import { lerpAngle, canvas2d, tex } from './lib.js?v=3';
+} from './data.js?v=4';
+import { buildRoom } from './room.js?v=4';
+import { buildCharacter } from './characters.js?v=4';
+import { lerpAngle, canvas2d, tex } from './lib.js?v=4';
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -106,8 +106,13 @@ const STATE_LABEL = {
 };
 
 function labelFor(a) {
+  if (a.state === 'meeting' && isLeader(a)) return '회의 주재';
   if (a.state === 'work' && a.kind !== 'human') return '집중 모드';
   return STATE_LABEL[a.state] || '작업 중';
+}
+
+function isLeader(a) {
+  return !!(a && a.rank === '팀장');
 }
 
 const spots = LOUNGE_SPOTS.map((s) => ({ ...s, occupant: null }));
@@ -409,13 +414,20 @@ function callMeeting() {
   }
   meetingActive = true;
   meetingCursor = -1;
-  meetingTimer = 1.4;
+  meetingTimer = 3.8;
   setMeetingUI(true);
+
+  // 팀장(VFORGE실장)이 소집부터 주재한다
+  const leader = agents.find(isLeader);
+  if (leader) {
+    hideBubble(leader);
+    showBubble(leader, '📣 팀장 소집! 다들 회의실로 모여주세요', 'lead');
+  }
 
   agents.forEach((a) => {
     if (a.meeting === null) return;
     releaseSpot(a);
-    hideBubble(a);
+    if (!isLeader(a)) hideBubble(a);
     goTo(a, meetingPath(a), () => {
       a.state = 'meeting';
       a.legAngle = -1.35;
@@ -429,9 +441,14 @@ function endMeeting() {
   meetingActive = false;
   setMeetingUI(false);
   meetingCursor = -1;
+  const leader = agents.find(isLeader);
+  if (leader) {
+    hideBubble(leader);
+    setTimeout(() => showBubble(leader, '브리핑 끝! 각자 자리로 복귀합니다 👍', 'lead', 4), 500);
+  }
   agents.forEach((a) => {
     if (a.meeting === null) return;
-    hideBubble(a);
+    if (!isLeader(a)) hideBubble(a);
     if (a.energy < a.threshold) {
       // too tired to work: go rest, compute path from the meeting table
       const spot = spots.find((s) => !s.occupant);
@@ -516,10 +533,11 @@ function animateAgent(a, dt, t) {
     }
   }
 
-  // vertical placement (sitting low, AI floating)
+  // vertical placement (sitting low, AI floating, AI perched on a desk chair)
   const floatY = a.kind === 'ai' ? Math.sin(t * 1.25 + a.phase) * 0.025 : 0;
   const bob = walking ? Math.abs(Math.sin(a.walkPhase)) * 0.035 : 0;
-  const targetY = (a.state === 'charging' ? a.sitY : 0) + floatY + bob;
+  const deskLift = a.state === 'work' && a.home.lift ? a.home.lift : 0;
+  const targetY = (a.state === 'charging' ? a.sitY : deskLift) + floatY + bob;
   a.group.position.y += (targetY - a.group.position.y) * Math.min(1, dt * 8);
 
   // blinking
@@ -613,10 +631,21 @@ function stateClass(state) {
   return '';
 }
 
+function rankClass(rank) {
+  if (rank === '팀장') return 'lead';
+  if (rank === '대표') return 'boss';
+  return 'member';
+}
+
 function selectAgent(a) {
   selectedId = a.id;
   $('#mc-dot').style.background = a.color;
   $('#mc-name').textContent = a.name;
+  const rank = $('#mc-rank');
+  if (rank) {
+    rank.textContent = a.rank || '팀원';
+    rank.className = 'mc-rank ' + rankClass(a.rank);
+  }
   $('#mc-role').textContent = a.role;
   const st = $('#mc-state');
   st.textContent = labelFor(a);
@@ -661,7 +690,7 @@ function buildDashboard() {
     const row = document.createElement('div');
     row.className = 'dash-row';
     row.innerHTML = `
-      <div class="dr-name"><i style="background:${a.color}"></i><b>${a.name}</b></div>
+      <div class="dr-name"><i style="background:${a.color}"></i><span class="dr-rank ${rankClass(a.rank)}">${a.rank || '팀원'}</span><b>${a.name}</b></div>
       <span class="dr-role">${a.role}</span>
       <span class="dr-state">작업 중</span>
       <div class="dr-energy"><div class="bar"><i></i></div><span>100%</span></div>`;
@@ -853,6 +882,8 @@ let clockTimer = 0;
 function boardModel() {
   return agents.map((a) => ({
     name: a.name,
+    rank: a.rank || '팀원',
+    duty: a.duty || '',
     color: a.color,
     energy: a.energy,
     state: a.state === 'work' && a.kind !== 'human' ? 'idle' : a.state,

@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { mat, roundedBoxGeo, cyl, sphere, glowMat } from './lib.js?v=3';
+import { mat, roundedBoxGeo, cyl, sphere, glowMat } from './lib.js?v=4';
 
 function mesh(geo, material) {
   const m = new THREE.Mesh(geo, material);
