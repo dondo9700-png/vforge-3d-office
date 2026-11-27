@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#F0E2CE" />
+<title>VFORGE 3D 오피스</title>
+<meta name="description" content="VFORGE의 AI 팀과 함께하는 3D 미니어처 오피스. 회의 소집, 에너지 충전, 실시간 현황판." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%232E6BFF'/%3E%3Cpath d='M16 18h9l7 20 7-20h9L36 50h-8z' fill='%23fff'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+<link rel="stylesheet" href="./css/style.css" />
+<script>
+  // Boot diagnostics: show module/network failures on screen so the page never fails silently.
+  window.__vfBooted = false;
+  window.addEventListener('error', function (e) {
+    var box = document.getElementById('boot-error');
+    if (!box) { box = document.createElement('div'); box.id = 'boot-error'; document.body.appendChild(box); }
+    var msg = (e && e.message) ? e.message : '알 수 없는 오류';
+    if (e && e.target && e.target.tagName === 'SCRIPT') msg = '스크립트를 불러오지 못했습니다: ' + (e.target.src || '');
+    box.textContent = '⚠ ' + msg;
+    box.style.display = 'block';
+  }, true);
+  window.addEventListener('unhandledrejection', function (e) {
+    var box = document.getElementById('boot-error');
+    if (!box) { box = document.createElement('div'); box.id = 'boot-error'; document.body.appendChild(box); }
+    box.textContent = '⚠ ' + (e.reason && e.reason.message ? e.reason.message : String(e.reason));
+    box.style.display = 'block';
+  });
+  setTimeout(function () {
+    if (!window.__vfBooted) {
+      var box = document.getElementById('boot-error');
+      if (!box) { box = document.createElement('div'); box.id = 'boot-error'; document.body.appendChild(box); }
+      if (!box.textContent) box.textContent = '⚠ 3D 장면을 준비하는 데 시간이 걸리고 있습니다. 잠시 후 새로고침해 주세요.';
+      box.style.display = 'block';
+    }
+  }, 15000);
+</script>
+</head>
+<body>
+<canvas id="scene"></canvas>
+<div id="labels" aria-hidden="true"></div>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">V</div>
+    <div class="brand-text">
+      <h1>VFORGE 3D 오피스</h1>
+      <p>AI 팀과 함께하는 미니어처 작업실</p>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="badge" id="badge">
+      <span class="badge-dot"></span>
+      <span id="badge-text">운영 중</span>
+      <span class="badge-sep"></span>
+      <span id="badge-team">팀 10</span>
+    </div>
+  </div>
+</header>
+
+<div class="hint" id="hint">
+  <span>🖱️ 드래그로 회전 · 휠/핀치로 확대</span>
+  <span class="hint-sep">·</span>
+  <span>📞 전화기나 캐릭터를 눌러보세요</span>
+</div>
+
+<section class="member-card" id="member-card" hidden>
+  <button class="mc-close" id="mc-close" aria-label="닫기">✕</button>
+  <div class="mc-head">
+    <span class="mc-dot" id="mc-dot"></span>
+    <div class="mc-id">
+      <strong id="mc-name">이름</strong>
+      <span id="mc-role">역할</span>
+    </div>
+    <span class="mc-state" id="mc-state">작업 중</span>
+  </div>
+  <p class="mc-task" id="mc-task">현재 작업</p>
+  <div class="mc-energy">
+    <div class="mc-energy-top"><span>에너지</span><span id="mc-energy">100%</span></div>
+    <div class="bar"><i id="mc-bar"></i></div>
+  </div>
+  <p class="mc-tip" id="mc-tip"></p>
+</section>
+
+<section class="dashboard" id="dashboard" hidden>
+  <div class="dash-backdrop" id="dash-backdrop"></div>
+  <div class="dash-panel" role="dialog" aria-label="VFORGE 현황판">
+    <header class="dash-head">
+      <div>
+        <h2>📋 VFORGE 현황판</h2>
+        <p id="dash-sub">팀원 10명의 상태와 오늘의 실적</p>
+      </div>
+      <button class="dash-close" id="dash-close" aria-label="닫기">✕</button>
+    </header>
+    <div class="dash-stats" id="dash-stats"></div>
+    <div class="dash-list" id="dash-list"></div>
+    <footer class="dash-foot">
+      <span id="dash-clock">--:--</span>
+      <span>VFORGE · 1인 프리랜서 운영 중</span>
+    </footer>
+  </div>
+</section>
+
+<footer class="controlbar" id="controlbar">
+  <button class="btn primary" id="btn-meeting">📞 회의 소집</button>
+  <button class="btn" id="btn-board">📋 현황판</button>
+  <span class="vsep"></span>
+  <div class="presets" role="group" aria-label="카메라 프리셋">
+    <button class="chip" data-preset="all">전체</button>
+    <button class="chip" data-preset="meeting">회의실</button>
+    <button class="chip" data-preset="lounge">휴게실</button>
+    <button class="chip" data-preset="board">화이트보드</button>
+  </div>
+</footer>
+
+<div class="loading" id="loading">
+  <div class="loading-inner">
+    <div class="loading-logo">V</div>
+    <p>3D 오피스 준비 중…</p>
+    <div class="loading-bar"><i></i></div>
+  </div>
+</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+<script type="module" src="./js/main.js"></script>
+</body>
+</html>
