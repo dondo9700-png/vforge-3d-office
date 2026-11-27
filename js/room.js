@@ -936,10 +936,10 @@ function buildLounge(scene) {
   const seat = box(0.8, 0.18, 0.8, '#8c5a3c', 0.1);
   seat.position.y = 0.48;
   mc.add(seat);
-  const back = box(0.78, 1.0, 0.22, '#7b4c31', 0.1);
-  back.position.set(0, 0.95, -0.34);
-  back.rotation.x = -0.12;
-  mc.add(back);
+  const mcBack = box(0.78, 1.0, 0.22, '#7b4c31', 0.1);
+  mcBack.position.set(0, 0.95, -0.34);
+  mcBack.rotation.x = -0.12;
+  mc.add(mcBack);
   const head = box(0.4, 0.22, 0.18, '#9a6544', 0.08);
   head.position.set(0, 1.44, -0.4);
   mc.add(head);
@@ -1267,11 +1267,11 @@ function buildEmptyDeskArea(scene) {
   x.font = `700 18px ${KR_FONT}`;
   x.fillText('NEXT SEAT ✦', 128, 146);
   const sign = canvasPlane(c, 0.62, 0.48, { toneMapped: false });
-  sign.position.set(6.0, 1.05, -1.1);
+  sign.position.set(6.0, 1.02, -1.1);
   sign.rotation.x = -0.12;
   scene.add(sign);
   const stand = box(0.62, 0.4, 0.04, '#e9d9bf', 0.02);
-  stand.position.set(6.0, 1.0, -1.13);
+  stand.position.set(6.0, 0.96, -1.13);
   scene.add(stand);
   const plant = makePlant(0.3, 6.85, 0.78, -1.2, '#7fb069');
   scene.add(plant);
