@@ -180,12 +180,12 @@ function neonTexture() {
   x.font = `800 96px ${KR_FONT}`;
   x.textAlign = 'center';
   x.textBaseline = 'middle';
-  x.shadowColor = '#8fc0ff';
-  x.shadowBlur = 44;
-  x.fillStyle = '#e6efff';
+  x.shadowColor = 'rgba(126,178,255,0.85)';
+  x.shadowBlur = 26;
+  x.fillStyle = '#9dc4ff';
   x.fillText('VFORGE', 256, 78);
-  x.shadowBlur = 18;
-  x.fillStyle = '#ffffff';
+  x.shadowBlur = 10;
+  x.fillStyle = '#eaf3ff';
   x.fillText('VFORGE', 256, 78);
   x.shadowBlur = 0;
   x.fillStyle = '#ffffff';
@@ -1123,7 +1123,7 @@ function buildDecor(scene) {
   scene.add(p2frame);
 
   // neon sign on left wall
-  const neon = canvasPlane(neonTexture(), 2.3, 0.72, { toneMapped: false, opacity: 0.98, blending: THREE.AdditiveBlending });
+  const neon = canvasPlane(neonTexture(), 2.3, 0.72, { toneMapped: false, opacity: 0.95 });
   neon.position.set(-9.84, 3.1, -3.4);
   neon.rotation.y = Math.PI / 2;
   scene.add(neon);

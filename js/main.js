@@ -712,26 +712,46 @@ $('#dash-backdrop').addEventListener('click', closeDashboard);
 
 // ------------------------------------------------------------ camera presets
 const PRESETS = {
-  all: { p: [18.0, 16.8, 22.2], t: [1.0, 0.55, 0.7] },
-  meeting: { p: [6.6, 6.4, 10.4], t: [2.2, 0.7, 3.4] },
-  lounge: { p: [-8.4, 6.4, 14.2], t: [-4.9, 0.7, 5.1] },
-  board: { p: [4.6, 3.9, 1.6], t: [4.6, 2.3, -7.6] },
+  all: { p: [18.0, 16.8, 22.2], t: [1.0, 0.55, 0.7], w: 25, h: 18.5 },
+  meeting: { p: [6.6, 6.4, 10.4], t: [2.2, 0.7, 3.4], w: 9.5, h: 7.4 },
+  lounge: { p: [-8.4, 6.4, 14.2], t: [-4.9, 0.7, 5.1], w: 9.5, h: 6.6 },
+  board: { p: [4.6, 3.9, 1.6], t: [4.6, 2.3, -7.6], w: 7.5, h: 5.4 },
 };
 
 let camTween = null;
+let currentPreset = 'all';
+let userMoved = false;
 
 function markPreset(name) {
+  currentPreset = name;
   document.querySelectorAll('.chip').forEach((c) => {
     c.classList.toggle('on', c.dataset.preset === name);
   });
 }
 
-function setPreset(name, instant = false) {
+function presetVectors(name) {
   const p = PRESETS[name];
-  if (!p) return;
-  const k = camera.aspect < 1.05 ? 1.5 : camera.aspect < 1.4 ? 1.18 : 1;
   const target = new THREE.Vector3(p.t[0], p.t[1], p.t[2]);
-  const pos = new THREE.Vector3(p.p[0], p.p[1], p.p[2]).sub(target).multiplyScalar(k).add(target);
+  const dir = new THREE.Vector3(p.p[0], p.p[1], p.p[2]).sub(target);
+  const baseD = dir.length() || 1;
+  dir.normalize();
+  let d = baseD;
+  if (camera.aspect < 1.2) {
+    // portrait / narrow screens: pull back enough that the diorama still fits
+    const halfTan = Math.tan((camera.fov * Math.PI) / 360);
+    const fit = Math.max(p.w / (2 * halfTan * camera.aspect), p.h / (2 * halfTan));
+    d = Math.max(baseD, fit);
+    if (camera.aspect < 0.95) {
+      dir.y *= 1.28;
+      dir.normalize();
+    }
+  }
+  return { pos: target.clone().add(dir.multiplyScalar(d)), target };
+}
+
+function setPreset(name, instant = false) {
+  if (!PRESETS[name]) return;
+  const { pos, target } = presetVectors(name);
   if (instant) {
     camera.position.copy(pos);
     controls.target.copy(target);
@@ -748,6 +768,10 @@ function setPreset(name, instant = false) {
   }
   markPreset(name);
 }
+
+controls.addEventListener('start', () => {
+  userMoved = true;
+});
 
 document.querySelectorAll('.chip').forEach((chip) => {
   chip.addEventListener('click', () => setPreset(chip.dataset.preset));
@@ -940,6 +964,10 @@ function onResize() {
   camera.aspect = w / h;
   camera.updateProjectionMatrix();
   labelRenderer.setSize(w, h);
+  if (!userMoved) {
+    camTween = null;
+    setPreset(currentPreset, true);
+  }
 }
 
 window.addEventListener('resize', onResize);
