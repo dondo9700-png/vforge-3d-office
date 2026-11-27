@@ -712,10 +712,10 @@ $('#dash-backdrop').addEventListener('click', closeDashboard);
 
 // ------------------------------------------------------------ camera presets
 const PRESETS = {
-  all: { p: [18.0, 16.8, 22.2], t: [1.0, 0.55, 0.7], w: 25, h: 18.5 },
-  meeting: { p: [6.6, 6.4, 10.4], t: [2.2, 0.7, 3.4], w: 9.5, h: 7.4 },
-  lounge: { p: [-8.4, 6.4, 14.2], t: [-4.9, 0.7, 5.1], w: 9.5, h: 6.6 },
-  board: { p: [4.6, 3.9, 1.6], t: [4.6, 2.3, -7.6], w: 7.5, h: 5.4 },
+  all: { p: [18.0, 16.8, 22.2], t: [1.0, 0.55, 0.7], w: 27.5, h: 19.5 },
+  meeting: { p: [6.6, 6.4, 10.4], t: [2.2, 0.7, 3.4], w: 10.5, h: 8 },
+  lounge: { p: [-8.4, 6.4, 14.2], t: [-4.9, 0.7, 5.1], w: 10, h: 7 },
+  board: { p: [4.6, 3.9, 1.6], t: [4.6, 2.3, -7.6], w: 8, h: 5.6 },
 };
 
 let camTween = null;
@@ -982,6 +982,16 @@ animate();
 setTimeout(() => {
   if (!camTween) setPreset('all');
 }, 120);
+
+// 모바일 브라우저는 주소창이 접히며 뷰포트가 바뀌므로 한 번 더 프레이밍을 맞춘다
+[350, 1100].forEach((ms) => {
+  setTimeout(() => {
+    if (!userMoved) {
+      camTween = null;
+      setPreset(currentPreset, true);
+    }
+  }, ms);
+});
 
 // expose a tiny debug handle (useful when checking the deployed page)
 window.__vfOffice = {
